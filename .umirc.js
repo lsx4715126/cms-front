@@ -4,7 +4,10 @@ import pxToViewPort from 'postcss-px-to-viewport';
 
 export default {
 	// disableCSSModules: true,
-	plugins: ['umi-plugin-dva'],
+	plugins: [
+		'umi-plugin-dva',
+		'./plugin/done.js',
+	],
 	hashHistory: true,//路由模式
 	// chainWebpack: () => {
 	// 	console.log('chainWebpack')
@@ -15,9 +18,9 @@ export default {
 	"define": {
 		"process.env.MODE": 1,//设置环境变量
 	},
-	externals: {
-		// '_': '_',
-		// jquery: 'jQuery'
+	externals: {// 使用cdn减少包的体积
+		lodash: '_',
+		jquery: 'jQuery'
 	},
 	extraBabelPlugins: ['@babel/plugin-syntax-optional-chaining'],
 	// browserslist: ['> 1%', 'last 20 versions'],//配置浏览器版本

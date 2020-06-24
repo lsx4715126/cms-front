@@ -4,7 +4,8 @@ import router from 'umi/router'
 import styles from './index.css';
 import Upload from '../components/Upload'
 import { Form, Select, Divider, Checkbox } from 'antd';
-// import $ from 'jquery';
+import $ from 'jquery';
+import _ from 'lodash'
 
 const { Option } = Select;
 
@@ -21,7 +22,7 @@ class Search extends React.Component{
 	}
 	render(){
 		let { form: { getFieldDecorator } } = this.props
-
+		console.log($, _)
 		return (
 			<Form className="search-form">
 				<Form.Item label={'员工工号'}>
