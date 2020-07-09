@@ -31,7 +31,7 @@ export const PAGE_SIZE = 3
 
 
 let config = {}
-
+config.mode = process.env.NODE_ENV
 config.PAGE_SIZE = 3
 
 

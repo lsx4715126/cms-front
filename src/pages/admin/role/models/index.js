@@ -90,12 +90,12 @@ export default {
 		*getResource({ payload }, { call, put }) {
 			//console.log(payload)
 			let resource = yield call(service.getResource)
-			//console.log('getResource', resource)
+			// console.log('getResource', resource)
 			yield put({ type: 'save', payload: { resource } });
 		},
 		*setResource({ payload }, { call, put, select }) {
 			let { record, checkedKeys, halfCheckedKeys } = yield select(state => state[ENTITY])
-			console.log([...checkedKeys, ...halfCheckedKeys], '---setResource---')
+			// console.log([...checkedKeys, ...halfCheckedKeys], '---setResource---')
 			yield call(service.setResource, {
 				roleId: record.id,
 				resourceIds: [...checkedKeys, ...halfCheckedKeys]

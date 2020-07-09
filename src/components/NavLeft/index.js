@@ -115,7 +115,7 @@ export default class extends Component {
         menus2 = uniqueObj(menus2, 'id')
         menus = listToTree(menus2)
 
-        console.log(menus, '---menus---')
+        // console.log(menus, '---menus---')
 
         
         return (

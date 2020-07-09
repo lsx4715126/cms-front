@@ -1,5 +1,6 @@
 import fetch from 'dva/fetch';
 import axios from 'axios'
+import querystring from 'querystring'
 import { message } from 'antd'
 import conf from './const'
 import debug from './debug'
@@ -7,8 +8,8 @@ import debug from './debug'
 
 
 
-let one = debug('red')
-let two = debug('green')
+let redDebug = debug('red')
+let greenDebug = debug('green')
 
 function parseJSON(response) {
 	return response.json();// 返回的是字符串的话解析会报错
@@ -190,10 +191,15 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
 	response => {
 		// hideLoadingMessage()
-		two('response:', response.data)
+		greenDebug('response:', response.data)
 		handleResponseIntercept(response.config)
 
-		return response.data;
+		let data = response.data
+		if(data.code && data.code > 0){
+			return data.data
+		}
+		
+		return data;
 	},
 	err => {
 		// console.dir(err.toString())
@@ -226,16 +232,19 @@ axios.interceptors.response.use(
  */
 export const http = new Proxy({}, {
 	get(target, key, context) {
-		return target[key] || ['get', 'post'].reduce((acc, key) => {
+		return target[key] || ['get', 'post', 'put', 'del'].reduce((acc, key) => {
 			acc[key] = (config) => {
-				if (!config && !config.url || config.url === '') throw new Error('Url cannot be empty.');
-				let isPost = key === 'post' || key === 'POST';
+				if (!config && !config.url || config.url === '') throw new Error('api地址不能为空');
 
-				if (isPost && !config.data) throw new Error('Please provide data in JSON format when using POST request.');
+				if (key == 'post' || key == 'put'){
+					if(!config.data){
+						throw new Error('请传入参数');
+					}
+				}
 
-				one('request:', config.url)
-				one('method:', isPost ? 'POST' : 'GET')
-				one('opts:', isPost ? config.data : '')
+				redDebug('request:', config.url)
+				redDebug('method:', key)
+				redDebug('opts:', config.data ? config.data : '')
 
 				if (config.routeChangeCancel === undefined) {
 					routeChangeCancel = true
@@ -243,13 +252,39 @@ export const http = new Proxy({}, {
 					routeChangeCancel = config.routeChangeCancel
 				}
 
-				if (isPost) {
+				if (key == 'post' || key == 'put') {
 					config.headers = !config.headers || {}
 					axios.defaults.headers = { ...axios.defaults.headers, ...config.headers }
 				}
 
-				// return axios[isPost ? 'post' : 'get'](config.url, isPost ? querystring.stringify(config.data) : null).catch(err => {})
-				return axios[isPost ? 'post' : 'get'](config.url, isPost ? JSON.stringify(config.data) : null).catch(err => { })
+				
+				let body = null
+				body = config.data ? JSON.stringify(config.data) : null
+				// body = config.data ? querystring.stringify(config.data) : null
+				switch(key){
+					case 'post' || 'POST':
+						return axios['post'](config.url, body).catch(err => { })		
+					case 'get' || 'GET':
+						let url = config.url
+						if(config.data) url += `?${querystring.stringify(config.data)}`
+
+						return axios['get'](url).catch(err => { })
+					case 'put' || 'PUT':
+						if(config.data){
+							return axios['put'](config.url, config.data).catch(err => { })	
+						}else{
+							console.log('未传入参数')
+							return Promise.reject('未传入参数')
+						}
+					case 'del' || 'delete':
+						if(config.data){
+							console.log(111)
+							return axios['delete'](config.url, {data: config.data}).catch(err => { })	
+						}else{
+							console.log(222)
+							return axios['delete'](config.url).catch(err => { })
+						}
+				}
 			};
 
 			return acc;

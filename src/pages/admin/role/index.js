@@ -309,6 +309,7 @@ class SetResourceModal extends Component {
             }
         ]
         */
+    //    console.log(resource, '---------')
         return (
             <Modal
                 title={`给 ${record.name} 分配权限`}

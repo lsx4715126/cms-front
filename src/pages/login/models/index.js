@@ -27,10 +27,10 @@ export default {
 
 	effects: {
 		*login({ payload }, { call, put }) {
-			let result = yield call(service.login, payload)
-			console.log(result)
-			if(result.code > 0 && result.permission){
-				ss.set(PERMISSION, result.permission)
+			let permission = yield call(service.login, payload)
+			
+			if(Array.isArray(permission)){
+				ss.set(PERMISSION, permission)
 				router.push('/admin/user')
 			}
 		},

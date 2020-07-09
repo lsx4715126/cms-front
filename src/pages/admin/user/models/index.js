@@ -49,28 +49,28 @@ export default {
 			// 	where = yield select(state => state[ENTITY].where)
 			// }
 
-			console.log('where', where)
+			// console.log('where', where)
 			let result = yield call(service.getList, pageNum, pageSize, where)
-			console.log(result, 'result')
+			// console.log(result, 'result')
 			// if (!result) return
 			yield put({ type: 'save', payload: { list: window.$get(result, 'list', []), total: window.$get(result, 'total', 0), pageNum: parseInt(pageNum), where } });
 		},
 		*addOrEdit({ payload }, { call, put }) {
 			let list = yield call(payload.id ? service.update : service.add, payload)
-			console.log(list)
+			// console.log(list)
 			yield put({ type: 'getList', payload: {} });
 			// yield put({ type: 'save', payload: { editVisible: false } });
 		},
 		*del({ payload }, { call, put }) {
 			let list = yield call(service.del, payload)
-			console.log(list)
+			// console.log(list)
 			yield put({ type: 'getList', payload: {} });
 			yield put({ type: 'save', payload: { editVisible: false } });
 		},
 		*delAll({ payload }, { call, put }) {
 			//console.log(payload)
 			yield call(service.delAll, payload)
-			console.log('delAll')
+			// console.log('delAll')
 			yield put({ type: 'getList', payload: {} });
 			yield put({ type: 'save', payload: { editVisible: false } });
 		},

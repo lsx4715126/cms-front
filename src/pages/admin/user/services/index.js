@@ -23,32 +23,46 @@ export function add(values) {
 }
 
 export function update(values) {
-	return request(`/api/${ENTITY}/${values.id}`, {
-		method: 'PUT',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(values)
-	});
+	// return request(`/api/${ENTITY}/${values.id}`, {
+	// 	method: 'PUT',
+	// 	headers: {
+	// 		'Content-Type': 'application/json'
+	// 	},
+	// 	body: JSON.stringify(values)
+	// });
+
+	return http.put({
+		url: `/${ENTITY}/${values.id}`,
+		data: values
+	})
 }
 
 export function del(id) {
-	return request(`/api/${ENTITY}/${id}`, {
-		method: 'DELETE',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify([id])
-	});
+	// return request(`/api/${ENTITY}/${id}`, {
+	// 	method: 'DELETE',
+	// 	headers: {
+	// 		'Content-Type': 'application/json'
+	// 	},
+	// 	body: JSON.stringify([id])
+	// });
+
+	return http.del({
+		url: `/${ENTITY}/${id}`,
+	})
 }
 
-export function delAll(ids) {
-	return request(`/api/${ENTITY}/${ids[0]}`, {
-		method: 'DELETE',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(ids)
-	});
+export function delAll(ids=[]) {
+	// return request(`/api/${ENTITY}/${ids[0]}`, {
+	// 	method: 'DELETE',
+	// 	headers: {
+	// 		'Content-Type': 'application/json'
+	// 	},
+	// 	body: JSON.stringify(ids)
+	// });
+
+	return http.del({
+		url: `/${ENTITY}/${ids[0]}`,
+		data: ids
+	})
 }
 

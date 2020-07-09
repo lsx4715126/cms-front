@@ -21,7 +21,6 @@ export default (props) => {
     }
 
 
-    console.log(isPer, '---isPer---')
     if(isPer){
         return <Button {...props} />
     }else{
