@@ -129,6 +129,7 @@ const handleResponseIntercept = config => {
 
 let loadingMessage = null
 let errMessage = null
+let errMessageShowTime = 5// 错误提示框停留时间
 function hideLoadingMessage() {
 	if (loadingMessage) {
 		loadingMessage()//隐藏loading
@@ -142,25 +143,25 @@ function checkErrStatus(err) {
 
 	// console.log(err, 'err')
 	if (err.status === 0) {
-		errMessage = message.error('连接超时', 5, () => { errMessage = null });
+		errMessage = message.error('连接超时', errMessageShowTime, () => { errMessage = null });
 	} else if (err.status === 500) {
-		errMessage = message.error('服务器出错，请联系管理员', 5, () => { errMessage = null });
+		errMessage = message.error('服务器出错，请联系管理员', errMessageShowTime, () => { errMessage = null });
 	} else if (err.status === 404) {
-		errMessage = message.error('请求失败，未找到请求地址', 5, () => { errMessage = null });
+		errMessage = message.error('请求失败，未找到请求地址', errMessageShowTime, () => { errMessage = null });
 	} else if (err.status === 504) {
-		errMessage = message.error('请求失败，服务器出错', 5, () => { errMessage = null });
+		errMessage = message.error('请求失败，服务器出错', errMessageShowTime, () => { errMessage = null });
 	} else if (err.status === 601) {
-		errMessage = message.error('异常', 5, () => { errMessage = null });
+		errMessage = message.error('异常', errMessageShowTime, () => { errMessage = null });
 	} else if (err.status === 602) {
-		errMessage = message.error('Invalid token!', 5, () => { errMessage = null });
+		errMessage = message.error('Invalid token!', errMessageShowTime, () => { errMessage = null });
 	} else if (err.status === 603) {
-		errMessage = message.error('没有权限', 5, () => { errMessage = null });
+		errMessage = message.error('没有权限', errMessageShowTime, () => { errMessage = null });
 	} else if (err.status === 604) {
-		errMessage = message.error('失败', 5, () => { errMessage = null });
+		errMessage = message.error('失败', errMessageShowTime, () => { errMessage = null });
 	} else if (err.status === 605) {
-		errMessage = message.error('修改失败', 5, () => { errMessage = null });
+		errMessage = message.error('修改失败', errMessageShowTime, () => { errMessage = null });
 	} else {
-		errMessage = message.error('错误状态：' + err.status, 5, () => { errMessage = null });
+		errMessage = message.error('错误状态：' + err.status, errMessageShowTime, () => { errMessage = null });
 	}
 }
 
@@ -195,8 +196,12 @@ axios.interceptors.response.use(
 		handleResponseIntercept(response.config)
 
 		let data = response.data
-		if(data.code && data.code > 0){
-			return data.data
+		if(data.code){
+			if(data.code > 0){
+				return data.data
+			}else{
+				errMessage = message.error(data.msg, errMessageShowTime, () => { errMessage = null });
+			}
 		}
 		
 		return data;
