@@ -19,6 +19,7 @@ const { MonthPicker } = DatePicker;
     state => ({
         ...state[ENTITY],
         test: state.global.test,
+        socket: state.global.socket,
         loading: state.loading.models[ENTITY]
     })
 )
@@ -177,6 +178,22 @@ export default class extends Component {
                         }}
                     />
                 </Card>
+                
+                
+                <button onClick={() => {
+                    this.props.dispatch({ type: 'global/getSocketList' })
+                }}>获取所有socket</button>
+                <input ref="socketId" />
+                <button onClick={() => {
+                    let target = this.refs['socketId'].value
+                    // chat: 服务端的路由
+                    this.props.socket.emit('chat', {
+                        target,
+                        payload: {
+                            msg : 'test',
+                        },
+                    });
+                }}>socket</button>
 
 
                 <EditModal

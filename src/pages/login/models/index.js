@@ -11,7 +11,7 @@ export default {
 	namespace: `${ENTITY}`,
 
 	state: {
-		
+
 	},
 
 	subscriptions: {
@@ -28,12 +28,15 @@ export default {
 	effects: {
 		*login({ payload }, { call, put }) {
 			let permission = yield call(service.login, payload)
-			
-			if(Array.isArray(permission)){
+
+			if (Array.isArray(permission)) {// 登陆成功，并返回了权限列表
 				ss.set(PERMISSION, permission)
 				router.push('/admin/user')
+
+				yield put({ type: 'global/socketConnect' })
 			}
 		},
+		
 	},
 
 	reducers: {
