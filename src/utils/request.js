@@ -176,7 +176,7 @@ axios.defaults.withCredentials = true;
 // axios.defaults.timeout =  conf.TIME_OUT;
 axios.interceptors.request.use(
 	config => {
-		config = handleRequestIntercept(config)
+		// config = handleRequestIntercept(config)
 		// console.log(config, 'config')
 		if (!loadingMessage) {
 			loadingMessage = message.loading('loading...', 0)
@@ -191,19 +191,19 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
 	response => {
-		// hideLoadingMessage()
+		hideLoadingMessage()
 		greenDebug('response:', response.data)
-		handleResponseIntercept(response.config)
+		// handleResponseIntercept(response.config)
 
 		let data = response.data
-		if(data.code){
-			if(data.code > 0){
+		if (data.code) {
+			if (data.code > 0) {
 				return data.data
-			}else{
+			} else {
 				errMessage = message.error(data.msg, errMessageShowTime, () => { errMessage = null });
 			}
 		}
-		
+
 		return data;
 	},
 	err => {
@@ -220,79 +220,21 @@ axios.interceptors.response.use(
 
 
 
-/**
- *  用法
- *  http.post({
-		url: 'my-url',
-		headers: {
 
-		},
-		routeChangeCancel: true,
-		data: ''
-	}).then((xhr) => {
-		alert('Success');
-	}, (xhr) => {
-		alert('Fail');
-	});
- */
 export const http = new Proxy({}, {
 	get(target, key, context) {
-		return target[key] || ['get', 'post', 'put', 'del'].reduce((acc, key) => {
-			acc[key] = (config) => {
-				if (!config && !config.url || config.url === '') throw new Error('api地址不能为空');
-
-				if (key == 'post' || key == 'put'){
-					if(!config.data){
-						throw new Error('请传入参数');
-					}
-				}
-
-				redDebug('request:', config.url)
-				redDebug('method:', key)
-				redDebug('opts:', config.data ? config.data : '')
-
-				if (config.routeChangeCancel === undefined) {
-					routeChangeCancel = true
-				} else {
-					routeChangeCancel = config.routeChangeCancel
-				}
-
-				if (key == 'post' || key == 'put') {
-					config.headers = !config.headers || {}
-					axios.defaults.headers = { ...axios.defaults.headers, ...config.headers }
-				}
-
+		return target[key] || ['get', 'post', 'put', 'delete'].reduce((memo, key) => {
+			memo[key] = (url = '', data = {}, config = {}) => {
+				redDebug('request:', url, key, data)
 				
-				let body = null
-				body = config.data ? JSON.stringify(config.data) : null
-				// body = config.data ? querystring.stringify(config.data) : null
-				switch(key){
-					case 'post' || 'POST':
-						return axios['post'](config.url, body).catch(err => { })		
-					case 'get' || 'GET':
-						let url = config.url
-						if(config.data) url += `?${querystring.stringify(config.data)}`
-
-						return axios['get'](url).catch(err => { })
-					case 'put' || 'PUT':
-						if(config.data){
-							return axios['put'](config.url, config.data).catch(err => { })	
-						}else{
-							console.log('未传入参数')
-							return Promise.reject('未传入参数')
-						}
-					case 'del' || 'delete':
-						if(config.data){
-							console.log(111)
-							return axios['delete'](config.url, {data: config.data}).catch(err => { })	
-						}else{
-							console.log(222)
-							return axios['delete'](config.url).catch(err => { })
-						}
-				}
+				
+				// routeChangeCancel = data.routeChangeCancel || config.routeChangeCancel || true
+				
+				
+				return axios[key](url, data, config)
 			};
 
-			return acc;
+			return memo;
 		}, target)[key];
 	},
 	set() {

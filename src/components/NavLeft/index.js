@@ -63,7 +63,7 @@ export default class extends Component {
 
     render() {
         let permission = ss.get(PERMISSION)
-        console.log(permission)
+        // console.log(permission)
         let menus = [
             {
                 "id": 1,

@@ -7,9 +7,10 @@ import conf from './const'
 
 
 
-let debug = (color = '') => (name, msg) => {
+let debug = (color = '') => (...opts) => {
     if(conf.mode == 'development'){
-        console.log(`%c ${name}`, `color:${color}`, msg);
+        let [ name, msg, ...other ] = opts
+        console.log(`%c ${name}`, `color:${color}`, msg, ...other);
     }
 }
 

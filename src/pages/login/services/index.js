@@ -4,10 +4,7 @@ import querystring from 'querystring'
 
 
 export function login(values) {
-	return http.post({
-		url: `/${ENTITY}`,
-		data: values
-	})
+	return http.post(`/${ENTITY}`, values)
 }
 
 
